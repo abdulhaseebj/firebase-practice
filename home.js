@@ -1,16 +1,21 @@
-// import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
-// const auth = getAuth();
+
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
 import { auth, db } from "./config.js";
-// import { collection, addDoc, getDocs, Timestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
 
-
-onAuthStateChanged(auth, (user) => {
+const userName = document.querySelector('.name')
+onAuthStateChanged(auth, async (user) => {
     if (user) {
         const uid = user.uid;
         console.log(uid);
+        const q = query(collection(db, 'users'), where("uid", "==", uid));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            console.log(doc.data());
+            userName.innerHTML = doc.data().name
+        });
     } else {
-       window.location = 'index.html'
+        window.location = 'index.html'
     }
 });
 
@@ -23,27 +28,4 @@ logout.addEventListener('click', (() => {
         console.log(error);
     });
 }))
-// onAuthStateChanged(auth, (user) => {
-//     if (user) {
 
-//         const uid = user.uid;
-//         console.log(uid);
-
-//     } else {
-//         window.location = 'login.html'
-//     }
-// });
-
-// // signout function
-// const btn = document.querySelector('.logOut')
-
-// btn.addEventListener('click', () => {
-//     signOut(auth).then(() => {
-//         console.log('signout succses fil');
-//         window.location = 'index.html'
-//     }).catch((error) => {
-//         console.log('error ===>', error);
-
-//     })
-
-// });

@@ -1,20 +1,30 @@
 import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
-import { auth } from "./config.js";
+import { auth, db } from "./config.js";
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
 
+const name = document.querySelector('.name')
 const form = document.querySelector('.form')
 const email = document.querySelector('.email')
 const password = document.querySelector('.password')
 
-form.addEventListener('submit', (event) => {
-    event.preventDefault()
-    console.log(email.value);
-    console.log(password.value);
+
+form.addEventListener('submit', (e) => {
+    e.preventDefault()
     createUserWithEmailAndPassword(auth, email.value, password.value)
-        .then((res) => {
-            // Signed up
-            const user = res.user;
+        .then((userCredential) => {
+            const user = userCredential.user;
             console.log(user);
-            window.location = './home.html'
+            addDoc(collection(db, "users"), {
+                name: name.value,
+                email: email.value,
+                uid: user.uid,
+            }).then((res) => {
+                console.log(res);
+                window.location = 'home.html'
+            }).catch((err) => {
+                console.log(err);
+            })
+
         })
         .catch((error) => {
             const errorCode = error.code;
@@ -22,3 +32,28 @@ form.addEventListener('submit', (event) => {
             console.log(errorMessage);
         });
 })
+
+
+// form.addEventListener('submit', (event) => {
+//     event.preventDefault()
+//     createUserWithEmailAndPassword(auth, email.value, password.value)
+//         .then((userCredential) => {
+//             const user = userCredential.user;
+//             console.log(user);
+//             addDoc(collection(db, 'user'), {
+//                 name: name.value,
+//                 email: email.value,
+//                 uid: user.uid
+//             }).then((res) => {
+//                 console.log(res);
+//                 window.location = 'home.html'
+//             }).catch((err) => {
+//                 console.log(err);
+//             })
+//         })
+//         .catch((error) => {
+//             const errorCode = error.code;
+//             const errorMessage = error.message;
+//             console.log(errorMessage);
+//         });
+// })
