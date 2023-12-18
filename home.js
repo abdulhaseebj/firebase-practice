@@ -19,6 +19,9 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
+
+const title 
+
 const logout = document.querySelector('.logOut')
 
 logout.addEventListener('click', (() => {
@@ -28,4 +31,15 @@ logout.addEventListener('click', (() => {
         console.log(error);
     });
 }))
+
+
+
+try {
+  const docRef = await addDoc(collection(db, "todo"), {
+   
+  });
+  console.log("Document written with ID: ", docRef.id);
+} catch (e) {
+  console.error("Error adding document: ", e);
+}
 
